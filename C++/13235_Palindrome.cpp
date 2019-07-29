@@ -1,3 +1,7 @@
+// Palindrome 
+//
+// use stack<char> stackchPre;
+
 #include <iostream>
 #include <string>
 #include <stack>

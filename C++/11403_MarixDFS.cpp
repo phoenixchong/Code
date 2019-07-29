@@ -1,6 +1,6 @@
 // 11403 - 인접행렬 경로 찾기
 //
-// use 
+// use array
 
 #include <iostream>
 #include <cstring>

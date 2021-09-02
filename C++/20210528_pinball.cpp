@@ -1,27 +1,58 @@
 
+// 2021. 05. 28 pinball game
+//
+// DFS(nStart, nDepth)
+// setParent()
+// LCA(nA, nB)
+//
+
+/*
+
+// input 
+//
+1
+8 5
+5 2 6 1 3 3 8 5
+0 1 1 3 3 2 4 4
+4 5
+6 7
+3 5
+7 2
+6 3
+
+// ouput
+//
+#1 42 39
+
+*/
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
 #include <vector>
+
+// clock
+#include <time.h>
 
 using namespace std;
 
 #define MAX_N 100001
 #define MAX_DEPTH 17 // 2^17 > 100,000
 
-const int INF = 1e9;
+const int INF = (int)1e9;
 
 int T, N, Q;
 
-int g_nMySum;
-int g_nLiaSum;
 int g_nParent[MAX_N][MAX_DEPTH];
 
-int g_nSum[MAX_N];
 int g_nCheck[MAX_N];
 int g_nDepth[MAX_N];
 
-vector <vector<int>> g_vnEdge;
+long long g_llSum[MAX_N];
+long long g_llMySum;
+long long g_llLiaSum;
+
+vector <int> g_vnEdge[MAX_N];
 vector <int> g_vnPinHoleGrade;
 
 void DFS(int nStart, int nDepth)
@@ -31,14 +62,14 @@ void DFS(int nStart, int nDepth)
 	g_nDepth[nStart] = nDepth;
 
 	int nNext;
-	for (int i = 0; i < g_vnEdge[nStart].size(); i++)
+	for (int i = 0; i < (int)g_vnEdge[nStart].size(); i++)
 	{
 		nNext = g_vnEdge[nStart][i];
 
 		if (g_nCheck[nNext])
 			continue;
 
-		g_nSum[nNext] = g_nSum[nStart] + g_vnPinHoleGrade[nNext];
+		g_llSum[nNext] = g_llSum[nStart] + g_vnPinHoleGrade[nNext];
 
 		g_nParent[nNext][0] = nStart;
 
@@ -48,7 +79,7 @@ void DFS(int nStart, int nDepth)
 
 void setParent()
 {
-	g_nSum[1] = g_vnPinHoleGrade[1];
+	g_llSum[1] = g_vnPinHoleGrade[1];
 
 	DFS(1, 0);
 
@@ -91,11 +122,17 @@ int main()
 {
 	freopen("input_210528.txt", "r", stdin);
 
+	//clock
+	clock_t nStart, nEnd;
+
 	cin >> T;
 	for (int tc = 1; tc <= T; tc++)
 	{
-		g_nMySum = 0;
-		g_nLiaSum = 0;
+		// clock
+		nStart = clock();
+
+		g_llMySum = 0;
+		g_llLiaSum = 0;
 
 		cin >> N >> Q;
 
@@ -104,11 +141,11 @@ int main()
 			cin >> g_vnPinHoleGrade[i];
 
 		
-		for (int i = 0; i <= N; i++)
-		{
-			vector <int> vnTemp;
-			g_vnEdge.emplace_back(vnTemp);
-		}
+		//for (int i = 0; i <= N; i++)
+		//{
+		//	vector <int> vnTemp;
+		//	g_vnEdge.emplace_back(vnTemp);
+		//}
 
 		int a;
 		for (int i = 1; i <= N; i++)
@@ -127,25 +164,34 @@ int main()
 
 			nResultNode = LCA(nMyPos, nLiaPos);
 
-			g_nMySum  += g_nSum[nMyPos];
-			g_nLiaSum += g_nSum[nLiaPos];
+			g_llMySum  += g_llSum[nMyPos];
+			g_llLiaSum += g_llSum[nLiaPos];
 
 			if (g_nDepth[nMyPos] == g_nDepth[nLiaPos])
 			{
-				g_nMySum  -= g_nSum[nResultNode];
-				g_nLiaSum -= g_nSum[nResultNode];
+				g_llMySum  -= g_llSum[nResultNode];
+				g_llLiaSum -= g_llSum[nResultNode];
 			}
 			else if (g_nDepth[nMyPos] > g_nDepth[nLiaPos])
 			{
-				g_nMySum -= g_nSum[nResultNode];
+				g_llMySum -= g_llSum[nResultNode];
 			}
 			else 
 			{
-				g_nLiaSum -= g_nSum[nResultNode];
+				g_llLiaSum -= g_llSum[nResultNode];
 			}
 		}
 
-		cout << "#" << tc << " " << g_nMySum << " " << g_nLiaSum << endl;
+		// clock
+		nEnd = clock();
+		
+		// millisecond
+		clock_t nElapsed = nEnd - nStart;
+
+		cout << "elapsed time : " << nElapsed << " [msec]" << endl;
+
+
+		cout << "#" << tc << " " << g_llMySum << " " << g_llLiaSum << endl;
 	}
 
 	return 0;

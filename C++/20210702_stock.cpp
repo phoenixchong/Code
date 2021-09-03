@@ -53,7 +53,7 @@ struct SegTree
 		auto p1 = _update(s, mid, n << 1, i, v);
 		auto p2 = _update(mid+1, e, ((n << 1) | 1), i, v);
 
-		return{ min(p1.first, p2.first), max(p1.second, p2.second) };
+		return tree[n] = make_pair ( min(p1.first, p2.first), max(p1.second, p2.second) );
 	}
 
 	int query(int l, int r) { auto p = _query(1, size, 1, l, r); return (p.second - p.first); }
